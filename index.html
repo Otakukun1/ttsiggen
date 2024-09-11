@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Nico's Signature Generator</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="form-wrapper">
+  <form id="signatureForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
+  
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" required><br><br>
+  
+    <label for="branch">Branch:</label>
+    <input type="text" id="branch" name="branch" required><br><br>
+  
+    <label for="telephone">Telephone:</label>
+    <input type="text" id="telephone" name="telephone" required><br><br>
+  
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
+  
+    <label for="address">Address:</label>
+    <input type="text" id="address" name="address" required><br><br>
+  
+    <button type="submit">Generate Signature</button>
+  </form>
+</div>
+  <h2>How to Add Signature to Outlook</h2>
+  <ol>
+    <li>Left-click drag on the generated signature image to highlight it.</li>
+    <li>Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to copy the image.</li>
+    <li>Open Microsoft Outlook.</li>
+    <li>Click on "File" in the top-left corner of the Outlook window.</li>
+    <li>Select "Options" from the menu.</li>
+    <li>In the Outlook Options window, click on "Mail" in the left sidebar.</li>
+    <li>Click on the "Signatures..." button.</li>
+    <li>In the Signatures and Stationery window, select the signature you want to modify or click "New" to create a new signature.</li>
+    <li>Enter a name for the signature and click "OK".</li>
+    <li>In the Edit Signature section, position the cursor where you want to insert the image.</li>
+    <li>Press <kbd>Ctrl</kbd> + <kbd>V</kbd> to paste the image into the signature field.</li>
+    <li>Adjust the image size and alignment if needed.</li>
+    <li>Click "OK" to save the signature.</li>
+    <li>Make sure the newly created signature is selected for new messages, replies, and forwards.</li>
+    <li>Compose a new email to see the signature applied.</li>
+  </ol>
+
+  <div id="generatedSignature"></div>
+  
+  <script>
+    document.getElementById("signatureForm").addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent form submission
+
+      // Get form values
+      var name = document.getElementById("name").value;
+      var title = document.getElementById("title").value;
+      var branch = document.getElementById("branch").value;
+      var telephone = document.getElementById("telephone").value;
+      var email = document.getElementById("email").value;
+      var address = document.getElementById("address").value;
+
+      // Format name (capitalize first letter of each word)
+      name = name.toLowerCase().replace(/(?:^|\s)\S/g, function(a) {
+        return a.toUpperCase();
+      });
+
+      // Format title and branch (capitalize first letter of each word)
+      title = title.toLowerCase().replace(/(?:^|\s)\S/g, function(a) {
+        return a.toUpperCase();
+      });
+      branch = branch.toLowerCase().replace(/(?:^|\s)\S/g, function(a) {
+        return a.toUpperCase();
+      });
+
+      // Format telephone (000 000 0000)
+      telephone = telephone.replace(/(\d{3})(\d{3})(\d{4})/, "$1 $2 $3");
+
+      // Format email (convert to lowercase)
+      email = email.toLowerCase();
+
+      // Format address (52 High Street, Worcester Central, Worcester, 6849)
+      address = address.toLowerCase().replace(/(?:^|\s)\S/g, function(a) {
+        return a.toUpperCase();
+      });
+
+      // Generate the email signature HTML
+      var signatureHTML = `
+      <table width="400" style="width:400px;font-size:9pt;font-family:Arial,sans-serif;line-height:normal;background-color: white;" cellspacing="0" cellpadding="0">
+        <tbody>
+          <tr>
+            <td style="padding-bottom: 6px;">
+              <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                  <tr>
+                    <td width="100" style="vertical-align:middle;text-align: center;border-right: 1px solid #d8d8d8;padding-right: 18px;font-size: 0;" valign="middle">
+                      <a target="_blank" style="outline: 0;text-decoration: none;">
+                        <img alt="a" style="display: inline-block;" src="img/logoonlypng2.png" width="100" height="" border="0" class="CToWUd">
+                      </a>
+                    </td>
+                    <td style="vertical-align:middle;padding-left: 18px;" valign="middle">
+                      <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tbody>
+                          <tr>
+                            <td style="font-size:20px;line-height: 17px; font-family:Calibri,Arial,sans-serif;font-weight:600;color:#222222;padding-bottom: 14px;text-transform: uppercase;">
+                              ${name}<br>
+                              <span style="font-weight: 400;font-size: 16px;text-transform: none;">${title}</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="font-size:11px;line-height: 10px; font-family:Calibri,Arial,sans-serif;font-weight:600;color:#000000;padding-bottom: 8px;text-transform: uppercase;">
+                              ${branch}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="font-family:Calibri,Arial,sans-serif;color:#575756;padding-bottom:1px;font-size: 13px;line-height: 13px;">
+                              <span>
+                                <span style="font-weight:bold;font-size: 0;">
+                                  <img src="img/telephone logo.png" width="10" height="10">
+                                </span>&nbsp;&nbsp;
+                                <a href="tel:${telephone}" style="text-decoration: none;outline: 0;color:#222222;" target="_blank">
+                                  <span style="font-family:Calibri,Arial,sans-serif;color:#222222;font-size: 13px;">
+                                    ${telephone}
+                                  </span>
+                                </a>
+                              </span><br>
+                              <span>
+                                <span style="font-weight:bold;font-size: 0;">
+                                  <img src="img/Email logo.png" width="10" height="10">
+                                </span>&nbsp;&nbsp;
+                                <a href="mailto:${email}" style="text-decoration: none;outline: 0;color:#222222;" target="_blank">
+                                  <span style="font-family:Calibri,Arial,sans-serif;color:#222222;font-size: 13px;">
+                                    ${email}
+                                  </span>
+                                </a>
+                              </span><br>
+                              <span>
+                                <span style="font-weight:bold;font-size: 0;">
+                                  <img src="img/address logo.png" width="10" height="10">
+                                </span>&nbsp;&nbsp;
+                                <a href="https://bloans.co.za/" style="text-decoration: none;outline: 0;color:#222222;" target="_blank">
+                                  <span style="font-family:Calibri,Arial,sans-serif;color:#222222;font-size: 13px;">
+                                    ${address}
+                                  </span>
+                                </a>
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="font-size: 0;line-height: 0;">
+              <img src="img/wordingonly.png" width="400" height="">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+
+      // Display the generated signature
+      document.getElementById("generatedSignature").innerHTML = signatureHTML;
+
+
+      // Use html2canvas to render the signature and apply the maximum width
+      html2canvas(signatureElement, { width: maxWidth }).then(function(canvas) {
+        // Create a temporary anchor element
+        var link = document.createElement("a");
+
+        // Convert the canvas to a data URL
+        var imageURL = canvas.toDataURL();
+
+        // Set the data URL as the anchor's href
+        link.href = imageURL;
+
+        // Specify the filename for the downloaded image
+        link.download = "email_signature.png";
+
+        // Programmatically trigger a click event on the anchor element
+        link.click();
+      });
+    });
+  </script>
+  <style>
+    #generatedSignature {
+      margin-top: 20px; /* Add desired spacing here */
+    }
+  </style>
+
+  <footer>
+    <p>Designed by <span style="color: #05476e; font-weight: bold;">Nico van der Sandt</span></p>
+  </footer>
+  
+  
+</body>
+</html>
